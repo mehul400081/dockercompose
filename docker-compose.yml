@@ -1,0 +1,37 @@
+version: "3"
+services:
+  service-hellodocker:
+
+    build:
+      context: ./hellodocker
+      dockerfile: Dockerfile
+    depends_on:
+      - service-hellokubernetes
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/docker/logs:/logs
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  service-hellokubernetes:
+
+    build:
+      context: ./hellokubernetes
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    volumes:
+      - /home/kubernetes/logs:/logs
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
